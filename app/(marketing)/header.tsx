@@ -27,7 +27,7 @@ export const Header = () => {
             <UserButton />
           </SignedIn>
           <SignedOut>
-            <SignInButton mode='modal' forceRedirectUrl='/languages'>
+            <SignInButton mode='modal' forceRedirectUrl='/language-select'>
               <Button size='lg' variant='ghost'>
                 Login
               </Button>

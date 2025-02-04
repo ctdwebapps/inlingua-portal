@@ -26,7 +26,7 @@ export default function Home() {
           </ClerkLoading>
           <ClerkLoaded>
             <SignedOut>
-              <SignInButton mode='modal' forceRedirectUrl='/languages'>
+              <SignInButton mode='modal' forceRedirectUrl='/language-select'>
                 <Button
                   size='lg'
                   variant='primaryOutline'
@@ -45,7 +45,7 @@ export default function Home() {
                 asChild
                 aria-label='Continue'
               >
-                <Link href='/languages'>Continue Learning</Link>
+                <Link href='/language-select'>Continue Learning</Link>
               </Button>
             </SignedIn>
           </ClerkLoaded>
