@@ -1,0 +1,4 @@
+- not redirecting to marketing page when trying to access route without being signed in
+- 1hr 40 decide if I want to keep the stickwrapper in the learn page, or just keep the feedwrapper
+- 1hr 40 look at the Header in the learn page (called course in my prev app) and see if want to show the flag etc. 
+- 1hr 54 again in his UserProgress the hearts and points vs. my version
