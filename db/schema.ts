@@ -6,8 +6,8 @@ import {
   serial,
   text,
   timestamp,
+  unique,
   varchar,
-  primaryKey,
 } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
 
@@ -15,14 +15,12 @@ import { relations } from 'drizzle-orm'
 export const languages = pgTable('languages', {
   id: serial('id').primaryKey(),
   language: varchar('language', { length: 100 }).notNull().unique(),
-  languageCode: varchar('language_code', { length: 10 }).notNull(),
   imageSrc: text('image_src').notNull(),
-  createdAt: timestamp('created_at').defaultNow(),
-  updatedAt: timestamp('updated_at').defaultNow(),
 })
 
 export const languageRelations = relations(languages, ({ many }) => ({
   classes: many(classes),
+  courses: many(courses),
 }))
 
 // Companies Table
@@ -35,16 +33,17 @@ export const companies = pgTable('companies', {
 
 export const companyRelations = relations(companies, ({ many }) => ({
   students: many(students),
+  classes: many(classes),
 }))
 
 // Course Levels Enum
 export const levelEnum = pgEnum('level_enum', [
-  'beginner',
-  'elementary',
-  'pre-intermediate',
-  'intermediate',
-  'upper-intermediate',
-  'advanced',
+  'Starter',
+  'Elementary',
+  'Pre-intermediate',
+  'Intermediate',
+  'Upper-intermediate',
+  'Advanced',
 ])
 
 // Classes Table
@@ -119,19 +118,28 @@ export const courseRelations = relations(courses, ({ one, many }) => ({
     references: [languages.id],
   }),
   classes: many(classes),
-  units: many(units),
+  units: many(units), // Ensure this relation exists to link courses to units
 }))
 
 // Units Table
-export const units = pgTable('units', {
-  id: serial('id').primaryKey(),
-  courseId: integer('course_id')
-    .references(() => courses.id, { onDelete: 'cascade' })
-    .notNull(),
-  unitNumber: integer('unit_number').notNull(), // 1-4
-  createdAt: timestamp('created_at').defaultNow(),
-  updatedAt: timestamp('updated_at').defaultNow(),
-})
+export const units = pgTable(
+  'units',
+  {
+    id: serial('id').primaryKey(),
+    courseId: integer('course_id')
+      .references(() => courses.id, { onDelete: 'cascade' })
+      .notNull(),
+    unitNumber: integer('unit_number').notNull(), // 1-4
+    createdAt: timestamp('created_at').defaultNow(),
+    updatedAt: timestamp('updated_at').defaultNow(),
+  },
+  (table) => ({
+    uniqueUnitPerCourse: unique('unique_unit_per_course').on(
+      table.courseId,
+      table.unitNumber
+    ),
+  })
+)
 
 export const unitRelations = relations(units, ({ one, many }) => ({
   course: one(courses, {
@@ -143,9 +151,9 @@ export const unitRelations = relations(units, ({ one, many }) => ({
 
 // Lesson Types Enum
 export const lessonTypeEnum = pgEnum('lesson_type', [
-  'grammar',
-  'vocabulary',
-  'communication',
+  'Grammar',
+  'Vocabulary',
+  'Communication',
 ])
 
 // Lessons Table

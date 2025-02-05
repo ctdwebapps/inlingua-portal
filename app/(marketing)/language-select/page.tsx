@@ -5,6 +5,7 @@ import { auth } from '@clerk/nextjs/server'
 
 const LanguageSelect = async () => {
   const { userId } = await auth()
+  console.log(userId)
 
   // Check if the userId is null or undefined, and handle the case accordingly
   if (!userId) {
