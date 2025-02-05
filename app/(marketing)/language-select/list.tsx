@@ -2,7 +2,6 @@
 
 // import { languages } from '@/db/schema'
 // import { Card } from './card'
-// import { useRouter } from 'next/navigation'
 
 // type Props = {
 //   languages: (typeof languages.$inferSelect)[]
@@ -35,12 +34,15 @@
 
 import { languages } from '@/db/schema'
 import { Card } from './card'
+import { useRouter } from 'next/navigation'
 
 type Props = {
   languages: (typeof languages.$inferSelect)[]
+  activeLanguage: string | null
 }
 
-export const List = ({ languages }: Props) => {
+export const List = ({ languages, activeLanguage }: Props) => {
+  const router = useRouter()
   return (
     <div className='pt-6 grid grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-4'>
       {languages.map((language) => (
@@ -49,8 +51,12 @@ export const List = ({ languages }: Props) => {
           id={language.id}
           language={language.language}
           imageSrc={language.imageSrc}
-          onClick={() => {}}
-          disabled={false}
+          onClick={() => {
+            if (activeLanguage === language.language) {
+              router.push('/learn')
+            }
+          }}
+          disabled={activeLanguage !== language.language} // Disable languages that aren't active
         />
       ))}
     </div>
