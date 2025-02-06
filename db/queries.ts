@@ -45,9 +45,19 @@ export const getStudentCourseWithUnits = cache(async (userId: string) => {
 })
 
 //get lessons when the unit card is clicked
-export const getLessonsForUnit = cache(async (unitId: number) => {
+export const getLessonsForUnit = async (unitId: number) => {
   const data = await db.query.lessons.findMany({
     where: eq(lessons.unitId, unitId),
   })
+
   return data
-})
+}
+
+// Get a specific lesson by ID
+export const getLessonById = async (lessonId: number) => {
+  const lesson = await db.query.lessons.findFirst({
+    where: eq(lessons.id, lessonId),
+  })
+
+  return lesson
+}

@@ -5,16 +5,25 @@ import { useRouter } from 'next/navigation'
 
 type Props = {
   image: string // URL for the image
-  title: number // Title text
+  title: number | string // Title text
   progress: number // Progress value (0 to 100)
-  unitId: number // Unique ID for the module (or dynamic route parameter)
+  itemId: number // Unique ID for the item (unit or lesson)
+  navigateTo: string
+  unitNumber?: number // Optional: If displaying lessons, this will be used to show "Unit X LessonType"
 }
 
-export const Card = ({ image, title, progress, unitId }: Props) => {
+export const Card = ({
+  image,
+  title,
+  progress,
+  itemId,
+  navigateTo,
+  unitNumber,
+}: Props) => {
   const router = useRouter()
 
   const handleCardClick = () => {
-    router.push(`/course/unit/${unitId}`) // Redirects to the dynamic route for the module
+    router.push(`${navigateTo}/${itemId}`)
   }
 
   return (
@@ -36,7 +45,9 @@ export const Card = ({ image, title, progress, unitId }: Props) => {
 
       {/* Title */}
       <div className='p-4'>
-        <h3 className='text-lg font-semibold text-gray-800'>Unit {title}</h3>
+        <h3 className='text-lg font-semibold text-gray-800'>
+          {unitNumber ? `Unit ${unitNumber} ${title}` : `Unit ${title}`}
+        </h3>
 
         {/* Progress Bar */}
         <div className='mt-4'>

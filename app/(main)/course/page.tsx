@@ -21,7 +21,7 @@ const CoursePage = async () => {
   // console.log(courseData)
 
   const units = courseData?.class?.course.units
-  console.log(units)
+  // console.log(units)
 
   // Fallback UI if no course data is found
   if (!courseData) {
@@ -57,10 +57,12 @@ const CoursePage = async () => {
           <div className='grid lg:grid-cols-3 md:grid-cols-2 max-w-screen-xl mx-auto gap-1 pt-8'>
             {units?.map((unit) => (
               <Card
+                // image={unit.image}
                 title={unit.unitNumber}
                 key={unit.id}
                 progress={50}
-                unitId={unit.id}
+                itemId={unit.id}
+                navigateTo='/course/unit'
               />
             ))}
           </div>
