@@ -33,7 +33,6 @@ export const companies = pgTable('companies', {
 
 export const companyRelations = relations(companies, ({ many }) => ({
   students: many(students),
-  classes: many(classes),
 }))
 
 // Course Levels Enum

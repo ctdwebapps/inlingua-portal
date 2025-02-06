@@ -1,7 +1,7 @@
 import { cache } from 'react'
 import { db } from './drizzle'
 import { eq } from 'drizzle-orm'
-import { students } from './schema'
+import { lessons, students } from './schema'
 
 //get languages for language-select page
 export const getLanguages = cache(async () => {
@@ -41,5 +41,13 @@ export const getStudentCourseWithUnits = cache(async (userId: string) => {
     },
   })
 
+  return data
+})
+
+//get lessons when the unit card is clicked
+export const getLessonsForUnit = cache(async (unitId: number) => {
+  const data = await db.query.lessons.findMany({
+    where: eq(lessons.unitId, unitId),
+  })
   return data
 })
