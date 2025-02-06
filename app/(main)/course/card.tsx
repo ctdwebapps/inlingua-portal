@@ -7,14 +7,14 @@ type Props = {
   image: string // URL for the image
   title: number // Title text
   progress: number // Progress value (0 to 100)
-  id: number // Unique ID for the module (or dynamic route parameter)
+  unitId: number // Unique ID for the module (or dynamic route parameter)
 }
 
-export const Card = ({ image, title, progress, id }: Props) => {
+export const Card = ({ image, title, progress, unitId }: Props) => {
   const router = useRouter()
 
   const handleCardClick = () => {
-    router.push(`/unit/${id}`) // Redirects to the dynamic route for the module
+    router.push(`/course/unit/${unitId}`) // Redirects to the dynamic route for the module
   }
 
   return (

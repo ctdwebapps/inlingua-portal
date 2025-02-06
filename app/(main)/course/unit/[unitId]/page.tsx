@@ -1,5 +1,5 @@
 const Unitpage = () => {
-  return <div>page</div>
+  return <div>Unit page</div>
 }
 
 export default Unitpage

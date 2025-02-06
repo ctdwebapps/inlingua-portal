@@ -60,7 +60,7 @@ const CoursePage = async () => {
                 title={unit.unitNumber}
                 key={unit.id}
                 progress={50}
-                id={unit.id}
+                unitId={unit.id}
               />
             ))}
           </div>
