@@ -44,14 +44,39 @@ export const getStudentCourseWithUnits = cache(async (userId: string) => {
   return data
 })
 
-//get lessons when the unit card is clicked
-export const getLessonsForUnit = async (unitId: number) => {
-  const data = await db.query.lessons.findMany({
-    where: eq(lessons.unitId, unitId),
+//get units with lessons
+export const getUnitsWithlessons = cache(async (userId: string) => {
+  const data = await db.query.students.findFirst({
+    where: eq(students.clerkUserId, userId),
+    with: {
+      class: {
+        with: {
+          course: {
+            with: {
+              units: {
+                with: {
+                  lessons: true, // Include the lessons for each unit
+                },
+              },
+            },
+          },
+          language: true,
+        },
+      },
+    },
   })
 
   return data
-}
+})
+
+//get lessons when the unit card is clicked
+// export const getLessonsForUnit = async (unitId: number) => {
+//   const data = await db.query.lessons.findMany({
+//     where: eq(lessons.unitId, unitId),
+//   })
+
+//   return data
+// }
 
 // Get a specific lesson by ID
 export const getLessonById = async (lessonId: number) => {
