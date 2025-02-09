@@ -20,6 +20,7 @@ const LessonClient = ({ activities }) => {
   if (!activity) {
     return <p>No activities available for this lesson.</p>
   }
+  console.log(activities)
 
   return (
     <div className='activity mt-8'>

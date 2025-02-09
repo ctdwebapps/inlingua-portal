@@ -24,7 +24,7 @@ export const getActiveLanguage = cache(async (userId: string) => {
   return data
 })
 
-export const getStudentCourseWithUnits = cache(async (userId: string) => {
+export const getStudentCourseWithUnits = async (userId: string) => {
   const data = await db.query.students.findFirst({
     where: eq(students.clerkUserId, userId),
     with: {
@@ -42,10 +42,10 @@ export const getStudentCourseWithUnits = cache(async (userId: string) => {
   })
 
   return data
-})
+}
 
 //get units with lessons
-export const getUnitsWithlessons = cache(async (userId: string) => {
+export const getUnitsWithlessons = async (userId: string) => {
   const data = await db.query.students.findFirst({
     where: eq(students.clerkUserId, userId),
     with: {
@@ -67,7 +67,7 @@ export const getUnitsWithlessons = cache(async (userId: string) => {
   })
 
   return data
-})
+}
 
 //get lessons when the unit card is clicked
 // export const getLessonsForUnit = async (unitId: number) => {
