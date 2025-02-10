@@ -10,7 +10,7 @@ import {
   unique,
   varchar,
 } from 'drizzle-orm/pg-core'
-import { relations } from 'drizzle-orm'
+import { relations, sql } from 'drizzle-orm'
 
 // Language Table
 export const languages = pgTable('languages', {
@@ -164,16 +164,71 @@ export const lessons = pgTable('lessons', {
     .notNull(),
   lessonType: lessonTypeEnum('lesson_type').notNull(),
   lessonObjectives: text('lesson_objectives').notNull(),
-  activities: jsonb('activities').notNull(), // JSON-based activities
   pointsAwarded: integer('points_awarded').default(0), // Points earned for completing this lesson
   completed: boolean('completed').default(false), // Track if the lesson is fully completed
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 })
 
-export const lessonRelations = relations(lessons, ({ one }) => ({
+export const lessonRelations = relations(lessons, ({ one, many }) => ({
   unit: one(units, {
     fields: [lessons.unitId],
     references: [units.id],
   }),
+  activities: many(activities),
 }))
+
+export const activities = pgTable('activities', {
+  id: serial('id').primaryKey(),
+  lessonId: integer('lesson_id')
+    .references(() => lessons.id, { onDelete: 'cascade' })
+    .notNull(),
+  type: text('type').notNull(), // e.g., "TrueFalse", "MultipleChoice", "FillInTheBlank"
+  description: text('description').notNull(),
+  points: integer('points').default(10),
+  activityName: text('activity_name').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+})
+
+export const activityRelations = relations(activities, ({ one, many }) => ({
+  lesson: one(lessons, {
+    fields: [activities.lessonId],
+    references: [lessons.id],
+  }),
+  questions: many(questions),
+}))
+
+export const questions = pgTable('questions', {
+  id: serial('id').primaryKey(),
+  activityId: integer('activity_id')
+    .references(() => activities.id, { onDelete: 'cascade' })
+    .notNull(),
+  question: text('question').notNull(),
+  answer: text('answer').notNull(), // Correct answer
+  choices: jsonb('choices').default(sql`NULL`), // Only for MultipleChoice
+  isCorrect: boolean('is_correct').default(sql`NULL`), // Student's result, default NULL
+  userAnswer: text('user_answer').default(sql`NULL`), // Student's response, default NULL
+})
+
+export const questionRelations = relations(questions, ({ one }) => ({
+  activity: one(activities, {
+    fields: [questions.activityId],
+    references: [activities.id],
+  }),
+}))
+
+export const studentActivities = pgTable('student_activities', {
+  id: serial('id').primaryKey(),
+  studentId: varchar('student_id', { length: 255 }) // Clerk ID
+    .references(() => students.clerkUserId, { onDelete: 'cascade' })
+    .notNull(),
+  activityId: integer('activity_id')
+    .references(() => activities.id, { onDelete: 'cascade' })
+    .notNull(),
+  isCompleted: boolean('is_completed').default(false), // Whether student finished it
+  score: integer('score').default(0), // Points earned
+  userAnswers: jsonb('user_answers').default([]), // Stores student's answers
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+})

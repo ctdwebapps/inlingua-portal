@@ -12,7 +12,7 @@ const LessonPage = async ({ params }) => {
     return notFound() // Return a 404 if the lesson is not found
   }
 
-  // console.log(lesson.activities)
+  console.log(lesson.activities)
 
   // Pass the lesson data to the Client Component
   return (

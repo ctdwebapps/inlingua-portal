@@ -53,6 +53,13 @@ export const getUnitsWithlessons = async (userId: string) => {
 export const getLessonById = async (lessonId: number) => {
   const lesson = await db.query.lessons.findFirst({
     where: eq(lessons.id, lessonId),
+    with: {
+      activities: {
+        with: {
+          questions: true, // Add this line to fetch questions related to each activity
+        },
+      },
+    },
   })
 
   return lesson
