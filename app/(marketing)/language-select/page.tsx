@@ -53,7 +53,7 @@ const LanguageSelect = async () => {
       )}
 
       <h1 className='text-2xl font-bold mt-10 text-neutral-700 text-center'>
-        Choose a language that you&apos;re currently studying
+        Choose the language that you&apos;re studying
       </h1>
       <List languages={languages} activeLanguage={activeLanguage} />
       {/* {JSON.stringify(languages)} */}

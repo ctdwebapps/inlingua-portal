@@ -1,4 +1,5 @@
 import {
+  boolean,
   integer,
   jsonb,
   pgEnum,
@@ -164,6 +165,8 @@ export const lessons = pgTable('lessons', {
   lessonType: lessonTypeEnum('lesson_type').notNull(),
   lessonObjectives: text('lesson_objectives').notNull(),
   activities: jsonb('activities').notNull(), // JSON-based activities
+  pointsAwarded: integer('points_awarded').default(0), // Points earned for completing this lesson
+  completed: boolean('completed').default(false), // Track if the lesson is fully completed
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 })

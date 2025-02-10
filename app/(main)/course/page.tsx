@@ -1,18 +1,14 @@
 import { FeedWrapper } from '@/components/feed-wrapper'
-// import { StickyWrapper } from '@/components/sticky-wrapper'
 import { Header } from './header'
-// import { UserProgress } from '@/components/user-progress'
 import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-
 import { getUnitsWithlessons } from '@/db/queries'
 import Link from 'next/link'
 
 const CoursePage = async () => {
   const { userId } = await auth()
-  // console.log(userId)
 
   // If userId is missing, redirect to login page
   if (!userId) {
@@ -20,7 +16,6 @@ const CoursePage = async () => {
   }
 
   const courseData = await getUnitsWithlessons(userId)
-  // console.log(courseData)
 
   // Fallback UI if no course data is found
   if (!courseData) {
@@ -28,18 +23,12 @@ const CoursePage = async () => {
   }
 
   const units = courseData?.class?.course.units
-  // console.log(units)
+
+  // Sort lessons by the predefined order: Grammar, Vocabulary, Communication
+  const lessonOrder = ['Grammar', 'Vocabulary', 'Communication']
 
   return (
     <div className='flex flex-row-reverse gap-[48px] px-6'>
-      {/* <StickyWrapper>
-        <UserProgress
-          activeCourse={{ title: 'Spanish', imageSrc: '/es.svg' }}
-          hearts={5}
-          points={100}
-          hasActiveSubscription={false}
-        />
-      </StickyWrapper> */}
       <FeedWrapper>
         <Header
           flag={courseData.class?.language.imageSrc}
@@ -65,19 +54,25 @@ const CoursePage = async () => {
                 </CardHeader>
                 <CardContent>
                   <div className='flex flex-col space-y-3'>
-                    {unit.lessons?.map((lesson) => (
-                      <Link
-                        href={`/course/unit/${unit.id}/lesson/${lesson.id}`}
-                        key={lesson.id}
-                      >
-                        <Button
-                          variant='primaryOutline'
-                          className='w-full justify-start text-orange-500'
+                    {unit.lessons
+                      ?.sort(
+                        (a, b) =>
+                          lessonOrder.indexOf(a.lessonType) -
+                          lessonOrder.indexOf(b.lessonType)
+                      ) // Sorting lessons
+                      .map((lesson) => (
+                        <Link
+                          href={`/course/unit/${unit.id}/lesson/${lesson.id}`}
+                          key={lesson.id}
                         >
-                          {lesson.lessonType}
-                        </Button>
-                      </Link>
-                    ))}
+                          <Button
+                            variant='primaryOutline'
+                            className='w-full justify-start text-orange-500'
+                          >
+                            {lesson.lessonType}
+                          </Button>
+                        </Link>
+                      ))}
                   </div>
                 </CardContent>
               </Card>
