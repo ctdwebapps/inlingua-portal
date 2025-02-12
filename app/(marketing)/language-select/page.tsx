@@ -18,6 +18,8 @@ const LanguageSelect = async () => {
     getActiveLanguage(userId),
   ])
 
+  console.log(languages)
+
   const activeLanguage = studentLanguage?.class?.language.language
 
   // console.log(activeLanguage)

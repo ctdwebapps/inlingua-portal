@@ -51,7 +51,7 @@ export const classes = pgTable('classes', {
   id: serial('id').primaryKey(),
   classNumber: varchar('class_number', { length: 20 }).notNull().unique(),
   languageId: integer('language_id')
-    .references(() => languages.id, { onDelete: 'restrict' })
+    .references(() => languages.id, { onDelete: 'cascade' })
     .notNull(),
   level: levelEnum('level').notNull(),
   courseId: integer('course_id')
@@ -106,7 +106,7 @@ export const courses = pgTable('courses', {
   level: levelEnum('level').notNull(),
   courseObjectives: text('course_objectives').notNull(),
   languageId: integer('language_id') // Course has a language
-    .references(() => languages.id, { onDelete: 'restrict' })
+    .references(() => languages.id, { onDelete: 'cascade' })
     .notNull(),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
@@ -205,7 +205,7 @@ export const questions = pgTable('questions', {
     .references(() => activities.id, { onDelete: 'cascade' })
     .notNull(),
   question: text('question').notNull(),
-  answer: text('answer').notNull(), // Correct answer
+  answer: jsonb('answer').notNull(), // Correct answer
   choices: jsonb('choices').default(sql`NULL`), // Only for MultipleChoice
   isCorrect: boolean('is_correct').default(sql`NULL`), // Student's result, default NULL
   userAnswer: text('user_answer').default(sql`NULL`), // Student's response, default NULL
