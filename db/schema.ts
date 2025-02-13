@@ -75,7 +75,7 @@ export const classRelations = relations(classes, ({ one, many }) => ({
 
 // Students Table
 export const students = pgTable('students', {
-  clerkUserId: varchar('clerk_user_id', { length: 255 }).primaryKey(), // Use Clerk ID as primary key
+  clerkUserId: varchar('clerk_user_id', { length: 255 }).primaryKey(),
   studentName: varchar('student_name', { length: 255 }).notNull(),
   email: varchar('email', { length: 255 }).notNull().unique(),
   companyId: integer('company_id').references(() => companies.id, {
@@ -84,6 +84,7 @@ export const students = pgTable('students', {
   classId: integer('class_id').references(() => classes.id, {
     onDelete: 'set null',
   }),
+  totalPoints: integer('total_points').default(0), // Total points for leaderboard
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 })
@@ -218,17 +219,42 @@ export const questionRelations = relations(questions, ({ one }) => ({
   }),
 }))
 
-export const studentActivities = pgTable('student_activities', {
+//Student Lessons Table (Tracks Lesson Progress & Points by Type). Used for "My Performance" page: Points breakdown by Grammar, Vocabulary, Communication. Lesson completion % (completedActivities / totalActivities * 100).
+export const studentLessons = pgTable('student_lessons', {
   id: serial('id').primaryKey(),
-  studentId: varchar('student_id', { length: 255 }) // Clerk ID
+  studentId: varchar('student_id', { length: 255 })
     .references(() => students.clerkUserId, { onDelete: 'cascade' })
     .notNull(),
-  activityId: integer('activity_id')
-    .references(() => activities.id, { onDelete: 'cascade' })
+  lessonId: integer('lesson_id')
+    .references(() => lessons.id, { onDelete: 'cascade' })
     .notNull(),
-  isCompleted: boolean('is_completed').default(false), // Whether student finished it
-  score: integer('score').default(0), // Points earned
-  userAnswers: jsonb('user_answers').default([]), // Stores student's answers
+  lessonType: lessonTypeEnum('lesson_type').notNull(), // Grammar, Vocabulary, Communication
+  pointsEarned: integer('points_earned').default(0), // Points for this lesson
+  completedActivities: integer('completed_activities').default(0), // How many activities completed
+  totalActivities: integer('total_activities').notNull(), // Total activities in the lesson
+  isCompleted: boolean('is_completed').default(false), // If lesson is fully done
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 })
+
+// Student Units Table (Tracks Unit Completion). Used to calculate Unit % Completed (completedLessons / totalLessons * 100).
+export const studentUnits = pgTable('student_units', {
+  id: serial('id').primaryKey(),
+  studentId: varchar('student_id', { length: 255 })
+    .references(() => students.clerkUserId, { onDelete: 'cascade' })
+    .notNull(),
+  unitId: integer('unit_id')
+    .references(() => units.id, { onDelete: 'cascade' })
+    .notNull(),
+  completedLessons: integer('completed_lessons').default(0), // How many lessons completed
+  totalLessons: integer('total_lessons').notNull(), // Total lessons in unit
+  isCompleted: boolean('is_completed').default(false), // If unit is fully done
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+})
+
+//Summary of Tracking
+// Table	                           Purpose
+// students	                         Stores total points (for leaderboard).
+// student_lessons	                 Tracks points per lesson type & lesson completion
+// student_units	                   Tracks unit completion %.
